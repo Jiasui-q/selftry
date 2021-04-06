@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:oop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--IOC：将MinPQInterface创建权给Spring -->
+    <bean id = "秦MinPQHeap" class = "edu.maven.selftry.spring.MinPQHeap">
+        <!--DI: 设置属性-->
+        <property name = "owner" value = "嘉穗"/>
+        <!--        <property name="items">
+                  <list>
+                      <bean class = "edu.maven.selftry.spring.MinPQHeap$PriorityNode">
+                          <constructor-arg name="e" value="秦老幺"/>
+                          <constructor-arg name="p" value="1"/>
+                      </bean>
+                      <bean class = "edu.maven.selftry.spring.MinPQHeap$PriorityNode">
+                          <property name="item" value="秦老二"/>
+                          <property name="priority" value="2"/>
+                      </bean>
+                      <bean class = "edu.maven.selftry.spring.MinPQHeap$PriorityNode">
+                          <constructor-arg index="0" value="秦老三"/>
+                          <constructor-arg index="1" value="3"/>
+                      </bean>
+                      <bean class = "edu.maven.selftry.spring.MinPQHeap$PriorityNode">
+                          <constructor-arg index="0" value="秦老大"/>
+                          <constructor-arg index="1" value="4"/>
+                      </bean>
+                  </list>
+              </property>-->
+           <property name="items">
+                  <list>
+                      <bean class = "edu.maven.selftry.spring.MinPQHeap$PriorityNode">
+                          <property name="item" value="秦老大"/>
+                          <property name="priority" value="4"/>
+                      </bean>
+                  </list>
+              </property>
+
+    </bean>
+
+    <!--<bean id = "ContextHolder" class = "edu.maven.selftry.spring.ApplicationContextHolder" />-->
+    <context:annotation-config/>
+    <context:component-scan base-package = "edu.maven.selftry.spring"/>
+
+    <oop:aspectj-autoproxy/>
+    <bean id = "MyAspect" class = "edu.maven.selftry.spring.MyAspect" />
+    <oop:config>
+        <oop:aspect id = "MyAspect" ref = "MyAspect">
+            <oop:pointcut id="allHeapMethods" expression="within(edu.maven.selftry.spring.MinPQHeap)"/>
+            <oop:pointcut id="getOwner" expression="execution(* getOwner())"/>
+            <oop:after-returning pointcut="execution(* getOwner()) and edu.maven.selftry.spring.MyAspect.allHeapMethods()"
+                                 returning="name" method="printOwner"/>
+        </oop:aspect>
+    </oop:config>
+</beans>
